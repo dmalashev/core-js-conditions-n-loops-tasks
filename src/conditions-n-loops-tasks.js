@@ -460,6 +460,10 @@ function rotateMatrix(matrix) {
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
 function sortByAsc(arr) {
+  if (arr.length < 2) {
+    return arr;
+  }
+
   const result = arr;
   let ok = false;
   let i = 1;
@@ -486,7 +490,7 @@ function sortByAsc(arr) {
     }
 
     i += 1;
-    if (i === arr.length - 1) {
+    if (i >= arr.length - 1) {
       i = 1;
     }
   }
@@ -551,8 +555,57 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let newNum;
+  const strNewNum = [];
+  for (let i = 0; i < String(number).length; i += 1) {
+    strNewNum[i] = Number(String(number)[i]);
+  }
+
+  const previous = [];
+  previous[strNewNum.length - 1] = strNewNum[strNewNum.length - 1];
+
+  for (let i = strNewNum.length - 2; i >= 0; i -= 1) {
+    if (strNewNum[i] < strNewNum[i + 1]) {
+      let minIndex = i + 1;
+      for (let j = i + 1; j < previous.length; j += 1) {
+        if (previous[j] > strNewNum[i] && previous[j] < previous[minIndex]) {
+          minIndex = j;
+        }
+      }
+
+      const changedChar = strNewNum[i];
+      strNewNum[i] = previous[minIndex];
+      strNewNum[minIndex] = changedChar;
+
+      const leftPart = [];
+      for (let j = 0; j <= i; j += 1) {
+        leftPart[j] = strNewNum[j];
+      }
+
+      let rightPart = [];
+      for (let j = i + 1; j < strNewNum.length; j += 1) {
+        rightPart[j - leftPart.length] = strNewNum[j];
+      }
+
+      rightPart = sortByAsc(rightPart);
+
+      newNum = '';
+      for (let j = 0; j < strNewNum.length; j += 1) {
+        if (j < leftPart.length) {
+          newNum += String(leftPart[j]);
+        } else {
+          newNum += String(rightPart[j - leftPart.length]);
+        }
+      }
+
+      return Number(newNum);
+    }
+
+    previous[i] = strNewNum[i];
+  }
+
+  return number;
 }
 
 module.exports = {
